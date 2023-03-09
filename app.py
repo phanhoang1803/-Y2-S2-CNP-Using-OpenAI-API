@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 def send_message(message_log):
-    api_key = "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"
+    api_key = "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"
     openai.api_key = api_key
     # Use OpenAI's ChatCompletion API to get the chatbot's response
     response = openai.ChatCompletion.create(
