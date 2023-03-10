@@ -3,6 +3,9 @@
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	<script src="jvs.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 </head>
 
 <body>
@@ -19,8 +22,11 @@
 				</select>
 			</div> -->
 			<div id="chatLog"></div>
+			<div id="audio-player"></div>	
 			<div class="form">
 				<input type="text" id="get.message" placeholder="Type your message..." onkeydown="if(event.keyCode===13) sendMessage()">
+				<button onclick="toggleRecording()" id="record-button">Start Recording</button>
+				<div id="recording-indicator"></div>
 				<button class="button" onclick="sendMessage()">Send</button>
 			</div>
 		</div>

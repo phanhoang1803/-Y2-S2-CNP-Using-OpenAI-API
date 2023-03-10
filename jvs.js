@@ -5,10 +5,10 @@ var message_log = [
 function return_response(result) {
 	// Add the response to the chat log
 	document.getElementById("chatLog").innerHTML +=
-	"<div class=\"message\">"
+		"<div class=\"message\">"
 		+ "<div class=\"logo\">  <img src=\"ABC_Logo.svg\" alt=\"Bot\" width=\"30\" height=\"30\">  </div>"
 		+ "<div class=\"bot_text\" style=\"white-space: pre-wrap;\">" + result + "</div>"
-	+ "</div>";
+		+ "</div>";
 }
 
 function response(user_input) {
@@ -21,9 +21,10 @@ function response(user_input) {
 		data: JSON.stringify({ "message": message_log }),
 		contentType: "application/json",
 		success: function (response) {
-			// message_log = response.message;
 			message_log = response.message;
-			console.log(message_log);
+
+			// console.log(message_log);
+
 			// $("#result").text(response.result);
 
 			// Print the response into the web
@@ -47,3 +48,99 @@ function sendMessage() {
 	// Get and print the response
 	response(messageValue);
 }
+
+// --------------------------------------- //
+
+let recorder;
+
+let isRecording = false;
+function toggleRecording() {
+	recordButton = document.getElementById('record-button');
+	if (isRecording) {
+		stopRecording();
+		recordButton.innerHTML = 'Start Recording';
+	} else {
+		startRecording();
+		recordButton.innerHTML = 'Stop And Send';
+	}
+	isRecording = !isRecording;
+}
+
+function startRecording() {
+	// Hiển thị hiệu ứng ghi âm
+	document.getElementById('recording-indicator').style.display = 'block';
+
+	let audioPlayer = document.getElementById('audio-player');
+	audioPlayer.innerHTML = ''; // Xoá thanh phát âm thanh
+
+	// Bắt đầu ghi âm
+	navigator.mediaDevices.getUserMedia({ audio: true })
+		.then(function (stream) {
+			recorder = new RecordRTC(stream, {
+				type: 'audio',
+				mimeType: 'audio/webm'
+			});
+			recorder.startRecording();
+		});
+}
+
+function stopRecording() {
+	recorder.stopRecording(function () {
+		let blob = recorder.getBlob();
+
+		// Ẩn hiệu ứng ghi âm
+		document.getElementById('recording-indicator').style.display = 'none';
+
+		// Create an audio element and play the recording
+		let audio = document.createElement('audio');
+		audio.src = URL.createObjectURL(blob);
+		audio.controls = true;
+		// let audioPlayer = document.getElementById('audio-player');
+		// audioPlayer.appendChild(audio);
+
+		document.getElementById("chatLog").innerHTML +=
+			"<div class=\"message user_background\">" +
+			"<div class=\"logo\"><img src=\"USER_Logo.png\" alt=\"User\" width=\"30\" height=\"30\"></div>" +
+			"<div class=\"audio-player\">" + audio.outerHTML + "</div>" +
+			"</div>";
+
+		// Play the recent audio
+		// audio.play();
+
+		uploadFile(blob)
+	});
+}
+
+function uploadFile(file) {
+	let formData = new FormData();
+	formData.append('audio', file);
+
+	$.ajax({
+		url: "http://localhost:5000/get_whisper",
+		type: "POST",
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			console.log('File uploaded successfully.');
+			// var result = response.result;
+			processResponse(response.result);
+		},
+		error: function () {
+			console.log('Error uploading file.');
+		}
+	});
+}
+
+function processResponse(response) {
+	// Do something with the response
+	console.log(response);
+	document.getElementById("chatLog").innerHTML +=
+		"<div class=\"message\">"
+		+ "<div class=\"logo\">  <img src=\"ABC_Logo.svg\" alt=\"Bot\" width=\"30\" height=\"30\">  </div>"
+		+ "<div class=\"bot_text\" style=\"white-space: pre-wrap;\">" + response + "</div>"
+		+ "</div>";
+ }
+
+//  when i run it the console shows Error uploading file. 
+//  Help me check and fix the error

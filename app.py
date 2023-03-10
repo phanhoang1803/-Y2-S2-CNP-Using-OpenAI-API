@@ -1,13 +1,16 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from pydub import AudioSegment
+import io
 import openai
-
+import os
 app = Flask(__name__)
 CORS(app)
 
+api_key = "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"
+openai.api_key = api_key
+
 def send_message(message_log):
-    api_key = "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"
-    openai.api_key = api_key
     # Use OpenAI's ChatCompletion API to get the chatbot's response
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  
@@ -39,6 +42,43 @@ def get_response():
 
     # Return the result by js
     return jsonify({"message": message_log, "result": response})
+
+# def convert_speech_to_text():
+    
+@app.route("/get_whisper", methods=["POST"])
+def get_whisper():
+    # Get the audio file from the POST request
+    audio_file = request.files["audio"]
+    
+    file_name = "F:\sadassa321sadas.webm"
+    audio_file.save(file_name)
+
+    # Convert speech to text
+    with open(file_name, "rb") as audio_file:
+        transcript = openai.Audio.transcribe(
+            model="whisper-1",
+            file=audio_file,
+            mime_type="audio/webm"
+        )
+    
+    # # Extract the text from the transcript
+    text = transcript["text"]
+
+    # Get the message from the POST request
+
+    message_log = [
+        {"role": "system", "content": "You are so good"},
+        {"role": "user", "content": text}
+    ]
+
+    # Send the message to the server
+    response = send_message(message_log)
+
+    # Update the conversation history
+    message_log.append({"role": "assistant", "content": response})
+
+    return jsonify({"result": response})
+    
 
 if __name__ == "__main__":
     app.run()
