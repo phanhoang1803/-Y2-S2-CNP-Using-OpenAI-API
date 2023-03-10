@@ -3,7 +3,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: left;
-    /* margin-top: 20px; */
     height: 100vh;
     font-size: large;
 }
@@ -11,7 +10,7 @@
 .chat-box {
     width: 70%;
     height: 80%;
-    background-color: rgb(250, 248, 248);
+    background-color: #f2f6f9;
     border: none;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -22,40 +21,53 @@
 .message {
     margin-bottom: 10px;
     display: flex;
-    /* flex-direction: column; */
+    flex-direction: row-reverse; /* đảo thứ tự các thành phần */
+    justify-content: flex-end; /* đưa user_logo lên bên phải */
 }
 
-.logo {
+.user_logo {
     font-weight: bold;
-    color: blue;
-    /* margin-bottom: 10px; */
+    color: #4CAF50;
+    font-size: xx-large;
+    order: 2;
+}
+
+.bot_logo {
+    font-weight: bold;
+    color: #4CAF50;
+    font-size: xx-large;
+    order: 2;
 }
 
 img {
     border-radius: 100%;
 }
 
-.user_background {
-    background-color: rgb(234, 231, 231);
-}
-
-.bot_background {
-    background-color: whitesmoke;
-}
-
 .user_text {
-    margin-top: 5px;
-    margin-left: 10px;
+    margin-right: 10px;
+    margin-left: auto;
+    max-width: 70%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    order: 2;
 }
 
 .bot_text {
-    margin-top: 5px;
     margin-left: 10px;
+    max-width: 70%;
+    background-color: rgb(210, 220, 244);
+    padding: 10px;
+    border-radius: 10px;
+    order: 1;
+    white-space: pre-wrap;
 }
 
 .form {
     display: flex;
     margin-top: 10px;
+    align-self: flex-end;
 }
 
 .form input[type="text"] {
@@ -67,7 +79,19 @@ img {
     font-size: large;
 }
 
-.button {
+.record_button {
+    margin-left: 10px;
+    border-radius: 3px;
+    padding: 5px 10px;
+    background-color: #af4c4c;
+    border: none;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    font-size: large;
+}
+
+.send_button {
     margin-left: 10px;
     border-radius: 3px;
     padding: 5px 10px;

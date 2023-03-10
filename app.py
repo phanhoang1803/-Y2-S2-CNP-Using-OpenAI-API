@@ -7,7 +7,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-api_key = "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"
+api_key = "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"
 openai.api_key = api_key
 
 def send_message(message_log):
@@ -15,7 +15,7 @@ def send_message(message_log):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  
         messages=message_log,   # The conversation history up to this point, as a list of dictionaries
-        max_tokens=3800,        # The maximum number of tokens (words or subwords) in the generated response
+        max_tokens=2048,        # The maximum number of tokens (words or subwords) in the generated response
         stop=None,              # The stopping sequence for the generated response, if any (not used here)
         temperature=0.7,        # The "creativity" of the generated response (higher temperature = more creative)
     )
@@ -36,6 +36,8 @@ def get_response():
 
     # Call API and receive the result
     response = send_message(message_log)
+
+    message_log =[]
 
     # Update the conversation history
     message_log.append({"role": "assistant", "content": response})
@@ -67,7 +69,7 @@ def get_whisper():
     # Get the message from the POST request
 
     message_log = [
-        {"role": "system", "content": "You are so good"},
+        {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": text}
     ]
 

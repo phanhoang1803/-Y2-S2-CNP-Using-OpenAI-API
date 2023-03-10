@@ -23,11 +23,13 @@
 			</div> -->
 			<div id="chatLog"></div>
 			<div id="audio-player"></div>	
-			<div class="form">
-				<input type="text" id="get.message" placeholder="Type your message..." onkeydown="if(event.keyCode===13) sendMessage()">
-				<button onclick="toggleRecording()" id="record-button">Start Recording</button>
-				<div id="recording-indicator"></div>
-				<button class="button" onclick="sendMessage()">Send</button>
+			<div class="form-wrapper">
+				<div class="form">
+					<input type="text" id="get.message" placeholder="Type your message..." onkeydown="if(event.keyCode===13) sendMessage()">
+					<button class="record_button" onclick="toggleRecording()" id="record-button">Start Recording</button>
+					<div id="recording-indicator"></div>
+					<button class="send_button" onclick="sendMessage()">Send</button>
+				</div>
 			</div>
 		</div>
 
