@@ -5,7 +5,8 @@ import openai
 app = Flask(__name__)
 CORS(app)
 
-api_key = "Your API-Key"
+api_key = "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"
+# api_key = "Your API-Key"
 openai.api_key = api_key
 
 def send_message(message_log):
@@ -32,17 +33,16 @@ def get_response():
     data = request.get_json()
     message_log = data["message"]
 
+    # Reduce tokens because this model only accept < 4096 tokens
+    message_log=message_log[-2:]
+
     # Call API and receive the result
     response = send_message(message_log)
-
-    # Return the conversation history to blank, 
-    # because Whisper model's maximum context length is 4096 tokens
-    message_log =[]
 
     # Update the conversation history
     message_log.append({"role": "assistant", "content": response})
 
-    # Return the result by js
+    # Return the result
     return jsonify({"message": message_log, "result": response})
 
 @app.route("/get_whisper", methods=["POST"])

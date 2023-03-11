@@ -43,6 +43,9 @@ function response(user_input) {
 		data: JSON.stringify({ "message": message_log }),
 		contentType: "application/json",
 		success: function (response) {
+			// Update message_log
+			message_log = response.message;
+
 			// Print the response into the web
 			return_response(response.result);
 		},
@@ -90,8 +93,6 @@ function startRecording() {
 	// Show recording effect
 	document.getElementById('recording-indicator').style.display = 'block';
 
-	let audioPlayer = document.getElementById('audio-player');
-
 	// Start recoding
 	navigator.mediaDevices.getUserMedia({ audio: true })
 		.then(function (stream) {
@@ -106,7 +107,7 @@ function startRecording() {
 function stopRecording() {
 	// Stop recording effect
 	document.getElementById('recording-indicator').style.display = 'none';
-	
+
 	recorder.stopRecording(function () {
 		let blob = recorder.getBlob();
 
