@@ -1,13 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pydub import AudioSegment
-import io
 import openai
-import os
 app = Flask(__name__)
 CORS(app)
 
-api_key = "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"
+api_key = "Your API-Key"
 openai.api_key = api_key
 
 def send_message(message_log):
@@ -37,6 +35,8 @@ def get_response():
     # Call API and receive the result
     response = send_message(message_log)
 
+    # Return the conversation history to blank, 
+    # because Whisper model's maximum context length is 4096 tokens
     message_log =[]
 
     # Update the conversation history
@@ -45,8 +45,6 @@ def get_response():
     # Return the result by js
     return jsonify({"message": message_log, "result": response})
 
-# def convert_speech_to_text():
-    
 @app.route("/get_whisper", methods=["POST"])
 def get_whisper():
     # Get the audio file from the POST request
@@ -63,23 +61,19 @@ def get_whisper():
             mime_type="audio/webm"
         )
     
-    # # Extract the text from the transcript
+    # Extract the text from the transcript
     text = transcript["text"]
 
-    # Get the message from the POST request
-
+    # Set message's context
     message_log = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": text}
     ]
 
-    # Send the message to the server
+    # Send the message to the server and receive
     response = send_message(message_log)
-
-    # Update the conversation history
-    message_log.append({"role": "assistant", "content": response})
-
-    return jsonify({"result": response})
+    
+    return jsonify({"result": response, "text_of_speech": text})
     
 
 if __name__ == "__main__":

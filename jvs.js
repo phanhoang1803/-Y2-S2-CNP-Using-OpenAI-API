@@ -1,19 +1,41 @@
+var voice_output = true;
+
+function convert_text_to_speech(messageInput){
+	// Check if Web Speech API is available in the browser
+	if ('speechSynthesis' in window) {
+		const message = messageInput;
+		const utterance = new SpeechSynthesisUtterance(message);
+		speechSynthesis.speak(utterance);
+		messageInput.value = '';
+	} else 
+		console.error('Web Speech API is not supported in this browser.');
+}
+
 var message_log = [
 	{ "role": "system", "content": "You are a helpful assistant." },
 ]
 
 function return_response(result) {
-	// Add the response to the chat log
+	// Set output method
+	if (document.getElementById("output-method").value == "text")
+		voice_output = false;
+	else
+		voice_output = true;
+
+	// Print the chatbot response into the web
 	document.getElementById("chatLog").innerHTML +=
 		"<div class=\"message\">"
 		+ "<div class=\"bot_logo\">  <img src=\"ABC_Logo.svg\" alt=\"Bot\" width=\"30\" height=\"30\">  </div>"
 		+ "<div class=\"bot_text\">" + result + "</div>"
 		+ "</div>";
+
+	// If the output is audio then play the audio
+	if (voice_output)
+		convert_text_to_speech(result);
 }
 
 function response(user_input) {
 	message_log.push({ "role": "user", "content": user_input });
-	// console.log(message_log);
 
 	$.ajax({
 		url: "http://localhost:5000/api/get_response",
@@ -21,18 +43,12 @@ function response(user_input) {
 		data: JSON.stringify({ "message": message_log }),
 		contentType: "application/json",
 		success: function (response) {
-			// message_log = response.message;
-			// return_response(response.message);
-			// console.log(message_log);
-
-			// $("#result").text(response.result);
-
 			// Print the response into the web
 			return_response(response.result);
 		},
 		error: function () {
-			return_response("This model's maximum context length is 4096 tokens. Please keep your questions short and concise.");
-			console.log('Error maximum');
+			return_response("This model's maximum context length is 4096 tokens. Please keep your questions short and concise. Or please provide valid api-key.");
+			console.log('Error maximum or invalid api-key');
 		}
 	});
 }
@@ -71,13 +87,12 @@ function toggleRecording() {
 }
 
 function startRecording() {
-	// Hiển thị hiệu ứng ghi âm
+	// Show recording effect
 	document.getElementById('recording-indicator').style.display = 'block';
 
 	let audioPlayer = document.getElementById('audio-player');
-	audioPlayer.innerHTML = ''; // Xoá thanh phát âm thanh
 
-	// Bắt đầu ghi âm
+	// Start recoding
 	navigator.mediaDevices.getUserMedia({ audio: true })
 		.then(function (stream) {
 			recorder = new RecordRTC(stream, {
@@ -92,9 +107,6 @@ function stopRecording() {
 	recorder.stopRecording(function () {
 		let blob = recorder.getBlob();
 
-		// Ẩn hiệu ứng ghi âm
-		document.getElementById('recording-indicator').style.display = 'none';
-
 		// Create an audio element and play the recording
 		let audio = document.createElement('audio');
 		audio.src = URL.createObjectURL(blob);
@@ -103,11 +115,10 @@ function stopRecording() {
 		document.getElementById("chatLog").innerHTML +=
 			"<div class=\"message\">" +
 			"<div class=\"user_logo\"><img src=\"USER_Logo.png\" alt=\"User\" width=\"30\" height=\"30\"></div>" +
-			"<div class=\"audio-player\">" + audio.outerHTML + "</div>" +
+			"<div class=\"audio-player user_text\">" + audio.outerHTML + "</div>" +
 			"</div>";
 
-		// Play the recent audio
-		// audio.play();
+		// Use the api to convert audio to text to get the answer
 		uploadFile(blob)
 	});
 }
@@ -116,6 +127,7 @@ function uploadFile(file) {
 	let formData = new FormData();
 	formData.append('audio', file);
 
+
 	$.ajax({
 		url: "http://localhost:5000/get_whisper",
 		type: "POST",
@@ -123,24 +135,18 @@ function uploadFile(file) {
 		processData: false,
 		contentType: false,
 		success: function (response) {
-			console.log('File uploaded successfully.');
-			processResponse(response.result);
+			// Print the text of the recent audio
+			document.getElementById("chatLog").innerHTML +=
+			"<div class=\"message\">"
+			+ "<div class=\"user_logo\">  <img src=\"USER_Logo.png\" alt=\"User\" width=\"30\" height=\"30\">  </div>"
+			+ "<div class=\"user_text\"> Text of your audio: " + response.text_of_speech + "</div>"
+			+ "</div>";
+
+			// Print GPT's response.
+			return_response(response.result);
 		},
 		error: function () {
-			console.log('Error uploading file.');
+			console.log('Cannot access get_whisper api.');
 		}
 	});
 }
-
-function processResponse(response) {
-	// Do something with the response
-	console.log(response);
-	document.getElementById("chatLog").innerHTML +=
-		"<div class=\"message\">"
-		+ "<div class=\"bot_logo\">  <img src=\"ABC_Logo.svg\" alt=\"Bot\" width=\"30\" height=\"30\">  </div>"
-		+ "<div class=\"bot_text\">" + response + "</div>"
-		+ "</div>";
- }
-
-//  when i run it the console shows Error uploading file. 
-//  Help me check and fix the error

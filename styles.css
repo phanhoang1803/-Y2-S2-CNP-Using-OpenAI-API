@@ -18,6 +18,20 @@
     padding: 10px;
 }
 
+
+.underline{
+    color: rgb(227, 21, 21);
+    text-decoration: underline;
+    font-size: 20px;
+}
+
+#output-method {
+    background-color: #f2f6f9;
+    font-size: large;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
 .message {
     margin-bottom: 10px;
     display: flex;
