@@ -104,6 +104,9 @@ function startRecording() {
 }
 
 function stopRecording() {
+	// Stop recording effect
+	document.getElementById('recording-indicator').style.display = 'none';
+	
 	recorder.stopRecording(function () {
 		let blob = recorder.getBlob();
 
