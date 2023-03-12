@@ -9,6 +9,7 @@ api_key = "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"
 # api_key = "Your API-Key"
 openai.api_key = api_key
 
+# Get into a conversation, then use GPT-api to get the answer, return that answer
 def send_message(message_log):
     # Use OpenAI's ChatCompletion API to get the chatbot's response
     response = openai.ChatCompletion.create(
@@ -27,6 +28,10 @@ def send_message(message_log):
     # If no response with text is found, return the first response's content (which may be empty)
     return response.choices[0].message.content
 
+
+# Receives a POST request with a JSON that contains a conversation history,
+# uses send_message function to receiving a response.
+# After that, return a JSON file containing the updated conversation history (message_log) and the response (result)
 @app.route("/api/get_response", methods = ["POST"])
 def get_response():
     # Get message from request
@@ -45,6 +50,10 @@ def get_response():
     # Return the result
     return jsonify({"message": message_log, "result": response})
 
+
+# Receives a POST request with a JSON that contains a audio file,
+# convert audio file to text and use send_message function to receiving a response.
+# After that, return a JSON file containing the response (result) and the text of audio file.
 @app.route("/get_whisper", methods=["POST"])
 def get_whisper():
     # Get the audio file from the POST request

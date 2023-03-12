@@ -1,5 +1,10 @@
 var voice_output = true;
 
+var message_log = [
+	{ "role": "system", "content": "You are a helpful assistant." },
+]
+
+// Takes in a string then outputs the voice of that string
 function convert_text_to_speech(messageInput){
 	// Check if Web Speech API is available in the browser
 	if ('speechSynthesis' in window) {
@@ -11,10 +16,7 @@ function convert_text_to_speech(messageInput){
 		console.error('Web Speech API is not supported in this browser.');
 }
 
-var message_log = [
-	{ "role": "system", "content": "You are a helpful assistant." },
-]
-
+// Takes in a string then prints the string according to the selected method
 function return_response(result) {
 	// Set output method
 	if (document.getElementById("output-method").value == "text")
@@ -34,6 +36,16 @@ function return_response(result) {
 		convert_text_to_speech(result);
 }
 
+// This function takes in a user input message as a parameter, 
+// adds it to a conversation log object (a list of dictionaries with the role and content of each message), 
+// and sends a POST request to url with the conversation log as the request data in JSON format.
+
+// If the request is successful, 
+// the function updates the conversation log with the response received from the API 
+// and prints the response onto the web page by calling the return_response() function.
+
+// If the request fails, the function prints an error message to the web page 
+// and logs an error message to the console.
 function response(user_input) {
 	message_log.push({ "role": "user", "content": user_input });
 
@@ -56,6 +68,11 @@ function response(user_input) {
 	});
 }
 
+// Gets the input message from the HTML element with the ID "get.message" 
+// then it prints the user's message onto the website.
+
+// After that, the function calls "response" and passes the user's message as an argument
+// in order to print the response.
 function sendMessage() {
 	var messageInput = document.getElementById("get.message");
 	var messageValue = messageInput.value;
@@ -75,8 +92,9 @@ function sendMessage() {
 // --------------------------------------- //
 
 let recorder;
-
 let isRecording = false;
+
+// This function determines the state and content of the recording display button or not
 function toggleRecording() {
 	recordButton = document.getElementById('record-button');
 	if (isRecording) {
@@ -88,6 +106,7 @@ function toggleRecording() {
 	}
 	isRecording = !isRecording;
 }
+
 
 function startRecording() {
 	// Show recording effect
@@ -104,6 +123,7 @@ function startRecording() {
 		});
 }
 
+// Stop recording and put the recording file in the uploadFile function to call the API and get the answer
 function stopRecording() {
 	// Stop recording effect
 	document.getElementById('recording-indicator').style.display = 'none';
@@ -127,10 +147,12 @@ function stopRecording() {
 	});
 }
 
+// Send recording file by Ajax
+// If success, it prints the text and the response of the audio
+// else, it prints error to the console 
 function uploadFile(file) {
 	let formData = new FormData();
 	formData.append('audio', file);
-
 
 	$.ajax({
 		url: "http://localhost:5000/get_whisper",
