@@ -5,7 +5,7 @@ import openai
 app = Flask(__name__)
 CORS(app)
 
-api_key = "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"
+api_key = "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"
 # api_key = "Your API-Key"
 openai.api_key = api_key
 
@@ -15,7 +15,7 @@ def send_message(message_log):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  
         messages=message_log,   # The conversation history up to this point, as a list of dictionaries
-        max_tokens=2048,        # The maximum number of tokens (words or subwords) in the generated response
+        max_tokens=3072,        # The maximum number of tokens (words or subwords) in the generated response
         stop=None,              # The stopping sequence for the generated response, if any (not used here)
         temperature=0.7,        # The "creativity" of the generated response (higher temperature = more creative)
     )

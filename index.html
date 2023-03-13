@@ -21,9 +21,21 @@
 				<option value="voice">Text and Voice</option>
 			</select>
 
+
 			<div id="chatLog"></div>
 			<div id="audio-player"></div>
 			<div class="form-wrapper">
+				
+				<div id="wait-dots-frame" style="display: none;">
+					<div class="bot_logo" style="margin-top: 10px; display: inline-flex;"> <img src="ABC_Logo.svg" alt="Bot" width="30" height="30">
+						<div class="waiting-dots">
+							<span></span>
+							<span></span>
+							<span></span>
+						</div>
+					</div>
+				</div>
+
 				<div class="form">
 					<input type="text" id="get.message" placeholder="Type your message..."
 						onkeydown="if(event.keyCode===13) sendMessage()">
@@ -33,6 +45,7 @@
 					<button class="send_button" onclick="sendMessage()">Send</button>
 				</div>
 			</div>
+
 		</div>
 
 	</div>

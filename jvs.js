@@ -46,8 +46,15 @@ function return_response(result) {
 
 // If the request fails, the function prints an error message to the web page 
 // and logs an error message to the console.
+let isWaiting = false;
 function response(user_input) {
 	message_log.push({ "role": "user", "content": user_input });
+
+	// Show waiting dot
+	if (!isWaiting) {
+		document.getElementById("wait-dots-frame").style.display = "block";
+		isWaiting = true;
+	}
 
 	$.ajax({
 		url: "http://localhost:5000/api/get_response",
@@ -57,6 +64,12 @@ function response(user_input) {
 		success: function (response) {
 			// Update message_log
 			message_log = response.message;
+
+			// Hide waiting dot
+			if (isWaiting) {
+				document.getElementById("wait-dots-frame").style.display = "none";
+				isWaiting = false;
+			}
 
 			// Print the response into the web
 			return_response(response.result);
@@ -68,6 +81,12 @@ function response(user_input) {
 				{ "role": "system", "content": "You are a helpful assistant." },
 			]
 			console.log('Error maximum or invalid api-key');
+
+			// Hide waiting dot
+			if (isWaiting) {
+				document.getElementById("wait-dots-frame").style.display = "none";
+				isWaiting = false;
+			}
 		}
 	});
 }
@@ -158,6 +177,12 @@ function uploadFile(file) {
 	let formData = new FormData();
 	formData.append('audio', file);
 
+	// Show waiting dot
+	if (!isWaiting) {
+		document.getElementById("wait-dots-frame").style.display = "block";
+		isWaiting = true;
+	}
+
 	$.ajax({
 		url: "http://localhost:5000/get_whisper",
 		type: "POST",
@@ -166,6 +191,12 @@ function uploadFile(file) {
 		contentType: false,
 		success: function (response) {
 			// Print the text of the recent audio
+			
+			if (isWaiting) {
+				document.getElementById("wait-dots-frame").style.display = "none";
+				isWaiting = true;
+			}
+
 			document.getElementById("chatLog").innerHTML +=
 			"<div class=\"message\">"
 			+ "<div class=\"user_logo\">  <img src=\"USER_Logo.png\" alt=\"User\" width=\"30\" height=\"30\">  </div>"
@@ -176,6 +207,11 @@ function uploadFile(file) {
 			return_response(response.result);
 		},
 		error: function () {
+			// Hide waiting dot
+			if (isWaiting) {
+				document.getElementById("wait-dots-frame").style.display = "none";
+				isWaiting = false;
+			}
 			console.log('Cannot access get_whisper api.');
 		}
 	});
