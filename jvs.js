@@ -63,6 +63,10 @@ function response(user_input) {
 		},
 		error: function () {
 			return_response("This model's maximum context length is 4096 tokens. Please keep your questions short and concise. Or please provide valid api-key.");
+			// Clear the conversation history
+			message_log = [
+				{ "role": "system", "content": "You are a helpful assistant." },
+			]
 			console.log('Error maximum or invalid api-key');
 		}
 	});
